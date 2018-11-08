@@ -36,7 +36,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>TPE.Timbiriche.App</mainClass>
+							<mainClass>TPE.Application.App</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

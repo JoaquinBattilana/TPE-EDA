@@ -1,4 +1,4 @@
-package TPE.Timbiriche;
+package TPE.Application;
 
 /**
  * Hello world!

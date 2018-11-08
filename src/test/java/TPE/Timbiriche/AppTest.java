@@ -1,4 +1,4 @@
-package TPE.Timbiriche;
+package TPE.Application;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
