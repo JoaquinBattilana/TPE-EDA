@@ -18,4 +18,10 @@ public enum Directions { // voy a tratar las direcciones como coordenadas para m
         this.x=x;
         this.y=y;
     }
+    public int getX(){
+        return x;
+    }
+    public int getY(){
+        return y;
+    }
 }

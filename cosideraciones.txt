@@ -1,0 +1,2 @@
+eleji hacer uan clase player para tener mas expansibilidad del codigo, podrian ser solo ID
+lo mismo con las fichas
