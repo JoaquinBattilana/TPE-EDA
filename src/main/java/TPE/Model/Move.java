@@ -1,27 +1,28 @@
 package TPE.Model;
 
-public class Move {
-    int [] startingPos;
-    int [] selectedPos;
-    int playerId;
-    Directions direc;
+import java.util.LinkedList;
+import java.util.List;
 
-    public Move(int[] startingPos, int[] selectedPos, int playerId, Directions direc){
-        this.startingPos=startingPos;
-        this.selectedPos=selectedPos;
-        this.playerId=playerId;
-        this.direc=direc;
+public class Move {
+    int x;
+    int y;
+    Player player;
+    List<GameTab> moveTabs;
+
+    public Move(Player player, int x, int y){
+        this.x=x;
+        this.y=y;
+        this.player=player;
+        moveTabs= new LinkedList<>();
     }
-    public boolean checkMove(Player player, GameTab[][] board, int[] startingPos, int size){
-        int auxX;
-        int auxY;
-        for(Directions direc: Directions.values()){
-            auxX=startingPos[0] + direc.getX();
-            auxY=startingPos[1] + direc.getY();
-            while(auxX<size && auxY<size){
-                    
-            }
-        }
-        return false;
+    public void addTab(GameTab tab){
+        moveTabs.add(tab);
+    }
+    public boolean isValid(){
+        return !moveTabs.isEmpty();
+    }
+    @Override
+    public String toString(){
+        return "("+x+","+y+")";
     }
 }

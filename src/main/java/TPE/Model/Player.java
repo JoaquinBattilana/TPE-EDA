@@ -13,4 +13,16 @@ public class Player {
         this.color=color;
         points=0;
     }
+    @Override
+    public boolean equals(Object o){
+        if(this==o)
+            return true;
+        if(!(o instanceof Player))
+            return false;
+        Player aux = (Player) o;
+        return aux.playerId==this.playerId;
+    }
+    public int getId(){
+        return playerId;
+    }
 }

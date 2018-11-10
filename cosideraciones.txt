@@ -1,2 +1,4 @@
 eleji hacer uan clase player para tener mas expansibilidad del codigo, podrian ser solo ID
 lo mismo con las fichas
+para el undo se me ocurrieron dos cosas, guardar el tablero o guardar las fichas que fueron afectadas, me decidi por la segunda ya que creo que es menos el espacio que ocupan
+y es de menor tiempo cambiarlas. Esto es porque fijandome no solo me alcanzaba con la posicion donde se hacia la jugada para revertir.
