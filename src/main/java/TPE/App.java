@@ -20,6 +20,7 @@ public class App extends Application
         t.addPlayer(Color.BLACK, false);
         t.setInitialPos();
         t.start();
+        System.out.println(t);
         primaryStage.setTitle("Reversi");
         FXMLLoader loader=new FXMLLoader(getClass().getResource("/Table.fxml"));
         Parent root=loader.load();
@@ -29,7 +30,6 @@ public class App extends Application
         Scene scene= new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
-
     }
     public static void main(String[] args){
         launch(args);

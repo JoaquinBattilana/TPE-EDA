@@ -23,6 +23,16 @@
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>11.0.1-ea+1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-fxml</artifactId>
+			<version>11.0.1-ea+1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -41,15 +51,24 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>com.zenjava</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>8.7.0</version>
+				<configuration>
+					<mainClass>TPE.App</mainClass>
+				</configuration>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>
-				<directory>TPE/View</directory>
+				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/*.fxml</include>
 				</includes>
 			</resource>
 		</resources>
 	</build>
+
 
 </project>

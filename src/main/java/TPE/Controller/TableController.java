@@ -49,9 +49,11 @@ public class TableController implements Initializable {
 
     private void addCircle(int i, int j) {
         Circle circle = new Circle(20);
-        circle.fillProperty().bind(Bindings.isNull());
+        circle.fillProperty().bind(Bindings.createObjectBinding( () ->model.getBoard()[i][j].getColor()
+        ));
         circle.setOnMouseClicked(e -> {
-            model.applyMove(i,j);
+            if(model.applyMove(i,j))
+                model.nextTurn();
         });
         board.add(circle, i, j);
     }

@@ -1,5 +1,7 @@
 package TPE.Model;
 
+import javafx.scene.paint.Color;
+
 public class GameTab {
     private int x; // posicion que ocupan en el tablero
     private int y;
@@ -26,9 +28,14 @@ public class GameTab {
     public String toString(){
         if(owner==null)
             return "vacio";
-        return "("+owner.getId()+","+x+","+y+")";
+        return "("+owner.getId()+","+x+","+y+")"+getColor().toString();
     }
     public Player getOwner(){
         return owner;
+    }
+    public Color getColor(){
+        if(owner==null)
+            return Color.GREEN;
+        return owner.getColor();
     }
 }
