@@ -1,6 +1,7 @@
 package TPE.Model;
 
-import java.awt.*;
+
+import javafx.scene.paint.Color;
 
 public class Player {
     int points; // cantidad de fichas
@@ -25,4 +26,5 @@ public class Player {
     public int getId(){
         return playerId;
     }
+    public Color getColor(){return color;};
 }

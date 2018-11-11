@@ -1,9 +1,9 @@
 package TPE.Model;
 
-import java.awt.*;
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
+import javafx.scene.paint.Color;
+
 import java.util.*;
-import java.lang.Iterable;
-import java.util.List;
 
 public class Table {
     private int playerQty=0;
@@ -111,6 +111,18 @@ public class Table {
                 tab.setOwner(move.getPlayer());
             return true;
         }
+    }
+    public int getSize(){
+        return size;
+    }
+    public Player[] getPlayers(){
+        return players;
+    }
+    public int getPlayerQty(){
+        return playerQty;
+    }
+    public GameTab[][] getBoard(){
+        return table;
     }
 }
 

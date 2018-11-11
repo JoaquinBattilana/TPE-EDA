@@ -28,4 +28,7 @@ public class GameTab {
             return "vacio";
         return "("+owner.getId()+","+x+","+y+")";
     }
+    public Player getOwner(){
+        return owner;
+    }
 }
