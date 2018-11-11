@@ -1,11 +1,9 @@
 package TPE.Model;
 
 import java.awt.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 import java.lang.Iterable;
+import java.util.List;
 
 public class Table {
     private int playerQty=0;
@@ -13,6 +11,7 @@ public class Table {
     private GameTab[][] table; // tablero
     private Stack<Move> undoMoves; // voy pusheando als movidas aca para poder ir reseteandolas
     private Player[] players; // los jugadores
+    private Map<Point, Move> turnMoves;
     int size;
 
     public Table(int n){  // inicia el tablero
@@ -20,6 +19,7 @@ public class Table {
         table = new GameTab[n][n];
         players = new Player[2];
         size=n;
+
         for(int i=0; i<size;i++){
             for(int j=0; j<size; j++){
                 table[i][j]= new GameTab(i,j,null);
@@ -36,22 +36,22 @@ public class Table {
         table[size/2-1][size/2]=new GameTab(size/2-1,size/2,players[1]);
         table[size/2][size/2]=new GameTab(size/2,size/2,players[1]);
     }
-    public Map<Integer[],Move> getMoves(){
+    public Map<Point,Move> getMoves(){
         Move aux;
-        Map<Integer[], Move> map = new Hashmap<>();
+        Map<Point, Move> map = new HashMap<>();
         for(int i=0; i<size;i++){
             for(int j=0; j<size; j++){
                 aux=isAMove(players[playerTurn], i, j);
                 if(aux!=null)
-                    map.put(i,j,aux);
+                    map.put(new Point(i,j),aux);
             }
         }
-        return list;
+        return map;
     }
     private Move isAMove(Player player, int x, int y){
         if(table[x][y].hasOwner())
             return null;
-        Move aux = new Move(player);
+        Move aux = new Move(player,x,y);
         for(Directions dir: Directions.values()){
             int auxX=x+dir.getX();
             int auxY=y+dir.getY();
@@ -64,6 +64,9 @@ public class Table {
         if(aux.isValid())
             return aux;
         return null;
+    }
+    public void start(){
+        turnMoves=getMoves();
     }
     private boolean goInDir(Directions dir, Player player, int x, int y, Move move){
         if (!table[x][y].hasOwner() || !isIn(x,y))
@@ -91,11 +94,22 @@ public class Table {
     private boolean isIn(int x, int y){
         return (x<size && x > 0) && (y<size && y>0);
     }
-    public void nextTurn(){playerTurn=(playerTurn+1)%playerQty;}
-    public void applyMove(Move move){
-        table[move.getX()][move.getY()].setOwner(move.getPlayer());
-        for(GameTab tab: move.getTabs()){
-            tab.setOwner(move.getPlayer());
+    public void nextTurn(){
+        playerTurn=(playerTurn+1)%playerQty;
+        turnMoves=getMoves();
+    }
+    public boolean applyMove(int x,  int y) {
+        Point p=new Point(x,y);
+        if(!turnMoves.containsKey(p)){
+            System.out.println("No es una jugada valida");
+            return false;
+        }
+        else{
+            Move move=turnMoves.get(p);
+            table[move.getX()][move.getY()].setOwner(move.getPlayer());
+            for(GameTab tab: move.getTabs())
+                tab.setOwner(move.getPlayer());
+            return true;
         }
     }
 }
