@@ -1,16 +1,14 @@
 package TPE.Model;
 
-import com.sun.org.glassfish.gmbal.GmbalException;
-
-
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.Map;
 import java.util.Stack;
+import java.lang.Iterable;
 
 public class Table {
-    private int playerId=0;
+    private int playerQty=0;
     private int playerTurn=0;
     private GameTab[][] table; // tablero
     private Stack<Move> undoMoves; // voy pusheando als movidas aca para poder ir reseteandolas
@@ -28,9 +26,9 @@ public class Table {
             }
         }
     }
-    public void addPlayer(Color color, boolean ia){
-        players[playerId]=new Player(color,playerId,ia);
-        playerId++;
+    public int addPlayer(Color color, boolean ia){
+        players[playerQty]=new Player(color,playerQty,ia);
+        return playerQty++;
     }
     public void setInitialPos(){;
         table[(size/2)-1][(size/2)-1]=new GameTab(size/2-1,size/2-1, players[0]);
@@ -38,14 +36,14 @@ public class Table {
         table[size/2-1][size/2]=new GameTab(size/2-1,size/2,players[1]);
         table[size/2][size/2]=new GameTab(size/2,size/2,players[1]);
     }
-    public Iterable<Move> getMoves(){
+    public Map<Integer[],Move> getMoves(){
         Move aux;
-        List<Move> list = new LinkedList<>();
+        Map<Integer[], Move> map = new Hashmap<>();
         for(int i=0; i<size;i++){
             for(int j=0; j<size; j++){
                 aux=isAMove(players[playerTurn], i, j);
                 if(aux!=null)
-                    list.add(aux);
+                    map.put(i,j,aux);
             }
         }
         return list;
@@ -53,7 +51,7 @@ public class Table {
     private Move isAMove(Player player, int x, int y){
         if(table[x][y].hasOwner())
             return null;
-        Move aux = new Move(player, x, y);
+        Move aux = new Move(player);
         for(Directions dir: Directions.values()){
             int auxX=x+dir.getX();
             int auxY=y+dir.getY();
@@ -61,7 +59,7 @@ public class Table {
             // o no hay pieza salteamos la direccion
             if (!isIn(auxX,auxY) || table[auxX][auxY].isOwner(player) || !table[auxX][auxY].hasOwner())
                 continue;
-            goInDir(dir,player,x,y,aux);
+            goInDir(dir,player,auxX,auxY,aux);
         }
         if(aux.isValid())
             return aux;
@@ -74,7 +72,7 @@ public class Table {
             return true;
         if(goInDir(dir, player, x+dir.getX(), y+dir.getY(), move))
             move.addTab(table[x][y]);
-        return true;
+            return false;
     }
     @Override
     public String toString(){
@@ -92,6 +90,13 @@ public class Table {
     }
     private boolean isIn(int x, int y){
         return (x<size && x > 0) && (y<size && y>0);
+    }
+    public void nextTurn(){playerTurn=(playerTurn+1)%playerQty;}
+    public void applyMove(Move move){
+        table[move.getX()][move.getY()].setOwner(move.getPlayer());
+        for(GameTab tab: move.getTabs()){
+            tab.setOwner(move.getPlayer());
+        }
     }
 }
 

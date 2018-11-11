@@ -1,8 +1,10 @@
 package TPE.Application;
 
+import TPE.Model.Move;
 import TPE.Model.Table;
 
 import java.awt.*;
+
 
 /**
  * Hello world!
@@ -11,11 +13,13 @@ import java.awt.*;
 public class App 
 {
     public static void main( String[] args ) {
-        Table t = new Table(4);
+        Table t = new Table(10);
         t.addPlayer(Color.WHITE,false);
-        t.addPlayer(Color.black, false);
+        t.addPlayer(Color.BLACK, false);
         t.setInitialPos();
         System.out.println(t);
-        t.printTestMoves();
+        Iterable<Move> list = t.getMoves();
+        t.applyMove(list.iterator().next());
+        System.out.println(t);
     }
 }

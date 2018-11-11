@@ -1,7 +1,5 @@
 package TPE.Model;
 
-import java.awt.*;
-
 public class GameTab {
     private int x; // posicion que ocupan en el tablero
     private int y;
@@ -20,6 +18,9 @@ public class GameTab {
         return owner!=null;
     }
     void flip(){} // funcion que flipea la ficha
+    public void setOwner(Player player){
+        this.owner=player;
+    }
 
     @Override
     public String toString(){
