@@ -3,6 +3,7 @@ import TPE.Model.Move;
 import TPE.Model.Point;
 import TPE.Model.Table;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -20,6 +21,7 @@ import java.util.ResourceBundle;
 public class TableController implements Initializable {
     private Table model;
     private Circle[][] tabs;
+    private NumberBinding radioSize;
 
     @FXML
     private Button undoButton;
@@ -48,6 +50,7 @@ public class TableController implements Initializable {
             colConst.setPercentWidth(100.0 / model.getSize());
             board.getColumnConstraints().add(colConst);
         }
+        radioSize = Bindings.min(board.heightProperty().divide(model.getSize()), board.widthProperty().divide(model.getSize()));
         for (int i = 0 ; i < model.getSize() ; i++) {
             for (int j = 0; j < model.getSize(); j++) {
                 addCircle(i,j);
@@ -59,6 +62,7 @@ public class TableController implements Initializable {
     private void addCircle(int i, int j) {
         System.out.println(i+" "+j);
         Circle circle = new Circle(20);
+        circle.radiusProperty().bind(board.widthProperty());
         if(model.getBoard()[i][j].hasOwner()) {
             circle.setFill(model.getBoard()[i][j].getOwner().getColor());
             circle.setStroke(Color.BLACK);
@@ -74,6 +78,7 @@ public class TableController implements Initializable {
             }
         });
         GridPane.setHalignment(circle, javafx.geometry.HPos.CENTER);
+        circle.radiusProperty().bind(radioSize.divide(3));
         board.add(circle, j, i);
         tabs[i][j] = circle;
 
