@@ -73,7 +73,7 @@ public class Table {
             return true;
         if(goInDir(dir, player, x+dir.getX(), y+dir.getY(), move))
             move.addTab(table[x][y]);
-            return false;
+        return false;
     }
     @Override
     public String toString(){
@@ -99,7 +99,6 @@ public class Table {
     public boolean applyMove(int x,  int y) {
         Point p=new Point(x,y);
         if(!turnMoves.containsKey(p)){
-            System.out.println("No es una jugada valida");
             return false;
         }
         else{
@@ -108,8 +107,16 @@ public class Table {
             table[move.getX()][move.getY()].setOwner(move.getPlayer());
             for(GameTab tab: move.getTabs())
                 tab.setOwner(move.getPlayer());
+            undoMoves.push(move);
             return true;
         }
+    }
+    public boolean undoMove(){
+        Move aux = undoMoves.pop();
+        table[aux.getX()][aux.getY()].setOwner(null);
+        for(GameTab tab: aux.getTabs())
+            tab.setOwner(players[(aux.getPlayer().getId()-1)%playerQty]);
+        return true;
     }
     public int getSize(){
         return size;

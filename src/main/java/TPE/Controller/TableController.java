@@ -6,6 +6,7 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -20,6 +21,8 @@ public class TableController implements Initializable {
     private Table model;
     private Circle[][] tabs;
 
+    @FXML
+    private Button undoButton;
     @FXML
     private GridPane board;
 
@@ -50,6 +53,7 @@ public class TableController implements Initializable {
                 addCircle(i,j);
             }
         }
+        showPosibleMoves();
     }
 
     private void addCircle(int i, int j) {
@@ -69,6 +73,7 @@ public class TableController implements Initializable {
                 refreshCircleColors();
             }
         });
+        GridPane.setHalignment(circle, javafx.geometry.HPos.CENTER);
         board.add(circle, j, i);
         tabs[i][j] = circle;
 
@@ -85,8 +90,15 @@ public class TableController implements Initializable {
                 }
             }
         }
+        showPosibleMoves();
+    }
+    private void showPosibleMoves(){
         for(Point aux: model.getMoves().keySet()){
             tabs[aux.getX()][aux.getY()].setStroke(Color.BLACK);
         }
+    }
+    public void undoAction(){
+        model.undoMove();
+        refreshCircleColors();
     }
 }

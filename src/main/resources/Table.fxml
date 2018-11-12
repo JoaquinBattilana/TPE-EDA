@@ -16,7 +16,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <Button layoutX="526.0" layoutY="104.0" mnemonicParsing="false" text="Button" />
+      <Button fx:id="undoButton" layoutX="526.0" layoutY="104.0" mnemonicParsing="false" onAction="#undoAction" text="UNDO" />
       <Button layoutX="526.0" layoutY="285.0" mnemonicParsing="false" text="Button" />
    </children>
 </AnchorPane>
