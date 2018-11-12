@@ -26,13 +26,14 @@ public class Table {
         }
     }
     public boolean gameFinished(){
-        boolean flag=false;
-        for(int i=0; i<playerQty && flag==false; i++){
+        boolean flag=true;
+        for(int i=0; i<playerQty && flag; i++){
             if(!getPlayerMoves(players[i]).isEmpty())
-                flag=true;
+                flag=false;
         }
         return flag;
     }
+
     public int addPlayer(Color color, boolean ia){
         players[playerQty]=new Player(color,playerQty,ia);
         return playerQty++;

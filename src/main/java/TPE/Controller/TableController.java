@@ -1,5 +1,6 @@
 package TPE.Controller;
 import TPE.Model.Move;
+import TPE.Model.Player;
 import TPE.Model.Point;
 import TPE.Model.Table;
 import javafx.beans.binding.Bindings;
@@ -13,8 +14,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -29,6 +33,16 @@ public class TableController implements Initializable {
     private GridPane board;
     @FXML
     private Button passButton;
+    @FXML
+    private Text player1Points;
+    @FXML
+    private Text player2Points;
+    @FXML
+    private Circle player1Circle;
+    @FXML
+    private Circle player2Circle;
+    @FXML
+    private Text winText;
 
     public void initModel(Table model){
 
@@ -42,6 +56,8 @@ public class TableController implements Initializable {
     }
 
     public void setView(){
+        player1Circle.setFill(model.getPlayers()[0].getColor());
+        player2Circle.setFill(model.getPlayers()[1].getColor());
         for (int i = 0; i < model.getSize()-1; i++) {
             RowConstraints rowConst = new RowConstraints();
             rowConst.setPercentHeight(100.0 / model.getSize());
@@ -59,6 +75,7 @@ public class TableController implements Initializable {
             }
         }
         showPosibleMoves();
+        refreshPoints();
     }
 
     private void addCircle(int i, int j) {
@@ -77,10 +94,15 @@ public class TableController implements Initializable {
             if(model.applyMove(i,j)) {
                 model.nextTurn();
                 refreshCircleColors();
-                System.out.println(model.getPlayers()[0].getPoints());
-                System.out.println(model.getPlayers()[1].getPoints());
-                if(model.gameFinished())
-                    System.out.println("termino");
+                refreshPoints();
+                if(model.gameFinished()) {
+                    if(model.getPlayers()[0].getPoints()==model.getPlayers()[1].getPoints())
+                        winText.setText("Es un empate");
+                    else if (model.getPlayers()[0].getPoints()>model.getPlayers()[1].getPoints())
+                        winText.setText("El ganador es el jugador 1");
+                    else
+                        winText.setText("El ganador es el jugador 2");
+                }
             }
         });
         GridPane.setHalignment(circle, javafx.geometry.HPos.CENTER);
@@ -109,10 +131,15 @@ public class TableController implements Initializable {
             tabs[aux.getX()][aux.getY()].setStroke(Color.BLACK);
         }
     }
+    private void refreshPoints(){
+        player1Points.setText(Integer.toString(model.getPlayers()[0].getPoints()));
+        player2Points.setText(Integer.toString(model.getPlayers()[1].getPoints()));
+    }
     public void undoAction(){
         if(!model.getUndoMoves().empty()) {
             model.undoMove();
             model.nextTurn();
+            refreshPoints();
             refreshCircleColors();
         }
     }
