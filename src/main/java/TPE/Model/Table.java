@@ -71,8 +71,10 @@ public class Table {
             return false;
         if (table[x][y].isOwner(player))
             return true;
-        if(goInDir(dir, player, x+dir.getX(), y+dir.getY(), move))
+        if(goInDir(dir, player, x+dir.getX(), y+dir.getY(), move)) {
             move.addTab(table[x][y]);
+            return true;
+        }
         return false;
     }
     @Override
@@ -96,6 +98,7 @@ public class Table {
         playerTurn=(playerTurn+1)%playerQty;
         turnMoves=getMoves();
     }
+
     public boolean applyMove(int x,  int y) {
         Point p=new Point(x,y);
         if(!turnMoves.containsKey(p)){
@@ -115,7 +118,7 @@ public class Table {
         Move aux = undoMoves.pop();
         table[aux.getX()][aux.getY()].setOwner(null);
         for(GameTab tab: aux.getTabs())
-            tab.setOwner(players[(aux.getPlayer().getId()-1)%playerQty]);
+            tab.setOwner(players[(aux.getPlayer().getId()+1)%playerQty]);
         return true;
     }
     public int getSize(){
@@ -130,6 +133,7 @@ public class Table {
     public GameTab[][] getBoard(){
         return table;
     }
+    public Stack<Move> getUndoMoves(){return undoMoves;}
 }
 
 

@@ -86,6 +86,7 @@ public class TableController implements Initializable {
                     tabs[i][j].setStroke(Color.BLACK);
                 }
                 else{
+                    tabs[i][j].setFill(Color.GREEN);
                     tabs[i][j].setStroke(Color.GREEN);
                 }
             }
@@ -98,7 +99,10 @@ public class TableController implements Initializable {
         }
     }
     public void undoAction(){
-        model.undoMove();
-        refreshCircleColors();
+        if(!model.getUndoMoves().empty()) {
+            model.undoMove();
+            model.nextTurn();
+            refreshCircleColors();
+        }
     }
 }

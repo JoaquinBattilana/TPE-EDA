@@ -15,7 +15,7 @@ public class App extends Application
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Table t = new Table(8);
+        Table t = new Table(4);
         t.addPlayer(Color.WHITE,false);
         t.addPlayer(Color.BLACK, false);
         t.setInitialPos();
