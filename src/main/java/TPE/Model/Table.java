@@ -25,27 +25,45 @@ public class Table {
             }
         }
     }
+    public boolean gameFinished(){
+        boolean flag=false;
+        for(int i=0; i<playerQty && flag==false; i++){
+            if(!getPlayerMoves(players[i]).isEmpty())
+                flag=true;
+        }
+        return flag;
+    }
     public int addPlayer(Color color, boolean ia){
         players[playerQty]=new Player(color,playerQty,ia);
         return playerQty++;
     }
-    public void setInitialPos(){;
+
+    public void setInitialPos(){
         table[(size/2)-1][(size/2)-1]=new GameTab(size/2-1,size/2-1, players[0]);
         table[size/2][size/2-1]=new GameTab(size/2,size/2-1, players[0]);
         table[size/2-1][size/2]=new GameTab(size/2-1,size/2,players[1]);
         table[size/2][size/2]=new GameTab(size/2,size/2,players[1]);
+        players[0].incrementPoints();
+        players[0].incrementPoints();
+        players[1].incrementPoints();
+        players[1].incrementPoints();
     }
-    public Map<Point,Move> getMoves(){
+
+    public Map<Point,Move> getPlayerMoves(Player player){
         Move aux;
         Map<Point, Move> map = new HashMap<>();
         for(int i=0; i<size;i++){
             for(int j=0; j<size; j++){
-                aux=isAMove(players[playerTurn], i, j);
+                aux=isAMove(player, i, j);
                 if(aux!=null)
                     map.put(new Point(i,j),aux);
             }
         }
         return map;
+    }
+
+    public Map<Point,Move> getMoves(){
+        return getPlayerMoves(players[playerTurn]);
     }
     private Move isAMove(Player player, int x, int y){
         if(table[x][y].hasOwner())
@@ -108,8 +126,12 @@ public class Table {
             Move move=turnMoves.get(p);
             System.out.println(p.getX()+" "+ p.getY());
             table[move.getX()][move.getY()].setOwner(move.getPlayer());
-            for(GameTab tab: move.getTabs())
+            move.getPlayer().incrementPoints();
+            for(GameTab tab: move.getTabs()) {
+                tab.getOwner().decrementPoints();
                 tab.setOwner(move.getPlayer());
+                move.getPlayer().incrementPoints();
+            }
             undoMoves.push(move);
             return true;
         }
@@ -117,8 +139,12 @@ public class Table {
     public boolean undoMove(){
         Move aux = undoMoves.pop();
         table[aux.getX()][aux.getY()].setOwner(null);
-        for(GameTab tab: aux.getTabs())
-            tab.setOwner(players[(aux.getPlayer().getId()+1)%playerQty]);
+        aux.getPlayer().decrementPoints();
+        for(GameTab tab: aux.getTabs()) {
+            tab.getOwner().decrementPoints();
+            tab.setOwner(players[(aux.getPlayer().getId() + 1) % playerQty]);
+            tab.getOwner().incrementPoints();
+        }
         return true;
     }
     public int getSize(){

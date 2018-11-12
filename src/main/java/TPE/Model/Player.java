@@ -26,5 +26,14 @@ public class Player {
     public int getId(){
         return playerId;
     }
+    public void incrementPoints(){
+        points++;
+    }
+    public void decrementPoints(){
+        points--;
+    }
+    public int getPoints(){
+        return points;
+    }
     public Color getColor(){return color;};
 }

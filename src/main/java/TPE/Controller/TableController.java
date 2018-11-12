@@ -27,6 +27,8 @@ public class TableController implements Initializable {
     private Button undoButton;
     @FXML
     private GridPane board;
+    @FXML
+    private Button passButton;
 
     public void initModel(Table model){
 
@@ -75,6 +77,10 @@ public class TableController implements Initializable {
             if(model.applyMove(i,j)) {
                 model.nextTurn();
                 refreshCircleColors();
+                System.out.println(model.getPlayers()[0].getPoints());
+                System.out.println(model.getPlayers()[1].getPoints());
+                if(model.gameFinished())
+                    System.out.println("termino");
             }
         });
         GridPane.setHalignment(circle, javafx.geometry.HPos.CENTER);
@@ -109,5 +115,9 @@ public class TableController implements Initializable {
             model.nextTurn();
             refreshCircleColors();
         }
+    }
+    public void passAction(){
+        model.nextTurn();
+        refreshCircleColors();
     }
 }
