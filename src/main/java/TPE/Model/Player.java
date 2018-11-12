@@ -4,10 +4,10 @@ package TPE.Model;
 import javafx.scene.paint.Color;
 
 public class Player {
-    int points; // cantidad de fichas
-    boolean ia; // es ia o jugador
-    int playerId;
-    Color color;
+    private int points; // cantidad de fichas
+    private boolean ia; // es ia o jugador
+    private int playerId;
+    private Color color;
     public Player(Color color, int playerId, boolean ia){
         this.ia=ia;
         this.playerId=playerId;

@@ -1,5 +1,6 @@
 package TPE.Model;
 
+import javafx.beans.value.ObservableStringValue;
 import javafx.scene.paint.Color;
 
 public class GameTab {
@@ -19,23 +20,16 @@ public class GameTab {
     public boolean hasOwner(){
         return owner!=null;
     }
-    void flip(){} // funcion que flipea la ficha
     public void setOwner(Player player){
         this.owner=player;
     }
-
     @Override
     public String toString(){
         if(owner==null)
-            return "vacio";
-        return "("+owner.getId()+","+x+","+y+")"+getColor().toString();
+            return "(0,0,0)";
+        return "("+owner.getId()+","+x+","+y+")";
     }
     public Player getOwner(){
         return owner;
-    }
-    public Color getColor(){
-        if(owner==null)
-            return Color.GREEN;
-        return owner.getColor();
     }
 }

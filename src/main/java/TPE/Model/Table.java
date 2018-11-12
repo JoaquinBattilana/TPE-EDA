@@ -56,9 +56,8 @@ public class Table {
             int auxY=y+dir.getY();
             // si hacia esa direccion esta fuera de los limites o hacia esa direccion la pieza es del jugador
             // o no hay pieza salteamos la direccion
-            if (!isIn(auxX,auxY) || table[auxX][auxY].isOwner(player) || !table[auxX][auxY].hasOwner())
-                continue;
-            goInDir(dir,player,auxX,auxY,aux);
+            if (isIn(auxX,auxY) && table[auxX][auxY].hasOwner() && !table[auxX][auxY].isOwner(player))
+                goInDir(dir,player,auxX,auxY,aux);
         }
         if(aux.isValid())
             return aux;
@@ -68,7 +67,7 @@ public class Table {
         turnMoves=getMoves();
     }
     private boolean goInDir(Directions dir, Player player, int x, int y, Move move){
-        if (!table[x][y].hasOwner() || !isIn(x,y))
+        if (!isIn(x,y) || !table[x][y].hasOwner())
             return false;
         if (table[x][y].isOwner(player))
             return true;
@@ -91,7 +90,7 @@ public class Table {
         System.out.println(getMoves());
     }
     private boolean isIn(int x, int y){
-        return (x<size && x > 0) && (y<size && y>0);
+        return (x<size && x >= 0) && (y<size && y>=0);
     }
     public void nextTurn(){
         playerTurn=(playerTurn+1)%playerQty;
@@ -105,6 +104,7 @@ public class Table {
         }
         else{
             Move move=turnMoves.get(p);
+            System.out.println(p.getX()+" "+ p.getY());
             table[move.getX()][move.getY()].setOwner(move.getPlayer());
             for(GameTab tab: move.getTabs())
                 tab.setOwner(move.getPlayer());
