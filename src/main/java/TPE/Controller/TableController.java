@@ -89,7 +89,7 @@ public class TableController implements Initializable {
                 model.nextTurn();
                 refreshCircleColors();
                 refreshPoints();
-                System.out.println(model.getBestDeepthMove(5));
+                System.out.println(model.getBestDeepthMove(6,true));
                 if(model.gameFinished()) {
                     if(model.getPlayers()[0].getPoints()==model.getPlayers()[1].getPoints())
                         winText.setText("Es un empate");

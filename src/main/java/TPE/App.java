@@ -24,9 +24,9 @@ public class App extends Application
         primaryStage.setTitle("Reversi");
         FXMLLoader loader=new FXMLLoader(getClass().getResource("/Table.fxml"));
         Parent root=loader.load();
-        TableController controler= loader.getController();
-        controler.initModel(t);
-        controler.setView();
+        TableController controller= loader.getController();
+        controller.initModel(t);
+        controller.setView();
         Scene scene= new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -81,22 +81,22 @@ public class Reversi {
     }
 
 
-    public Move getBestDeepthMove(int deepth){
+    public Move getBestDeepthMove(int deepth, boolean prune){
         int actual;
         int min=Integer.MIN_VALUE;
         Point bestMove=null;
         for(Point move: turnMoves.keySet()){
-            Board aux = board.getCopy();
-            aux.applyMove(turnMoves.get(move));
-            if((actual=deepthMiniMax(aux, players[(playerTurn+1)%playerQty],false, deepth))>min){
+            board.applyMove(turnMoves.get(move));
+            if ((actual = deepthMiniMax(board, players[(playerTurn + 1) % playerQty], false, deepth-1, prune, Integer.MIN_VALUE,Integer.MAX_VALUE)) > min) {
                 min = actual;
-                bestMove=move;
+                bestMove = move;
             }
+            board.applyReverseMove(turnMoves.get(move));
         }
         return turnMoves.get(bestMove);
     }
 
-    public int deepthMiniMax(Board board, Player playerTurn, boolean max, int deepth){
+    public int deepthMiniMax(Board board, Player playerTurn, boolean max, int deepth, boolean prune, int alpha, int beta){
         if(deepth==0)
             return heuristic(board,playerTurn);
         List<Move> moves = new ArrayList<>(board.getMoves(playerTurn).values());
@@ -106,28 +106,34 @@ public class Reversi {
                     return Integer.MAX_VALUE;
                 return Integer.MIN_VALUE;
             }
-            return deepthMiniMax(board, players[(playerTurn.getId()+1)%2], !max,deepth-1);
+            return deepthMiniMax(board, players[(playerTurn.getId()+1)%2], !max,deepth-1, prune, alpha, beta);
         }
         int actual;
         int m;
         if(max){
             m=Integer.MIN_VALUE;
             for(Move move: moves){
-                Board aux = board.getCopy();
-                aux.applyMove(move);
-                if((actual=deepthMiniMax(aux, players[(playerTurn.getId()+1)%playerQty],false, deepth-1))>m){
+                board.applyMove(move);
+                if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],false, deepth-1, prune, alpha, beta))>m){
                     m = actual;
                 }
+                alpha = Math.max(alpha, m);
+                board.applyReverseMove(move);
+                if(prune && alpha >= beta)
+                    break; // poda
             }
             return m;
         }
         m=Integer.MAX_VALUE;
         for(Move move: moves){
-            Board aux = board.getCopy();
-            aux.applyMove(move);
-            if((actual=deepthMiniMax(aux, players[(playerTurn.getId()+1)%playerQty],true, deepth-1))<m){
+            board.applyMove(move);
+            if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],true, deepth-1,prune, alpha, beta))<m){
                 m = actual;
             }
+            beta = Math.min(beta, m);
+            if(prune && alpha >= beta)
+                break;
+            board.applyReverseMove(move);
         }
         return m;
     }
