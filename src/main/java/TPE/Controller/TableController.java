@@ -82,8 +82,8 @@ public class TableController implements Initializable {
         System.out.println(i+" "+j);
         Circle circle = new Circle(20);
         circle.radiusProperty().bind(board.widthProperty());
-        if(model.getBoard()[i][j].hasOwner()) {
-            circle.setFill(model.getBoard()[i][j].getOwner().getColor());
+        if(model.getBoard()[i][j] != -1) {
+            circle.setFill(model.getPlayers()[model.getBoard()[i][j]].getColor());
             circle.setStroke(Color.BLACK);
         }
         else {
@@ -114,8 +114,8 @@ public class TableController implements Initializable {
     private void refreshCircleColors(){
         for (int i = 0 ; i < model.getSize() ; i++) {
             for (int j = 0; j < model.getSize(); j++) {
-                if (model.getBoard()[i][j].hasOwner()) {
-                    tabs[i][j].setFill(model.getBoard()[i][j].getOwner().getColor());
+                if (model.getBoard()[i][j]!= -1) {
+                    tabs[i][j].setFill(model.getPlayers()[model.getBoard()[i][j]].getColor());
                     tabs[i][j].setStroke(Color.BLACK);
                 }
                 else{

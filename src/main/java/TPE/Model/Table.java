@@ -7,7 +7,7 @@ import java.util.*;
 public class Table {
     private int playerQty=0;
     private int playerTurn=0;
-    private GameTab[][] table; // tablero
+    private int[][] table; // tablero
     private Stack<Move> undoMoves; // voy pusheando als movidas aca para poder ir reseteandolas
     private Player[] players; // los jugadores
     private Map<Point, Move> turnMoves;
@@ -15,13 +15,13 @@ public class Table {
 
     public Table(int n){  // inicia el tablero
         undoMoves = new Stack<>();
-        table = new GameTab[n][n];
+        table = new int[n][n];
         players = new Player[2];
         size=n;
 
         for(int i=0; i<size;i++){
             for(int j=0; j<size; j++){
-                table[i][j]= new GameTab(i,j,null);
+                table[i][j]= -1;
             }
         }
     }
@@ -40,10 +40,10 @@ public class Table {
     }
 
     public void setInitialPos(){
-        table[(size/2)-1][(size/2)-1]=new GameTab(size/2-1,size/2-1, players[0]);
-        table[size/2][size/2-1]=new GameTab(size/2,size/2-1, players[0]);
-        table[size/2-1][size/2]=new GameTab(size/2-1,size/2,players[1]);
-        table[size/2][size/2]=new GameTab(size/2,size/2,players[1]);
+        table[(size/2)-1][(size/2)-1]=0;
+        table[size/2][size/2-1]=0;
+        table[size/2-1][size/2]=1;
+        table[size/2][size/2]=1;
         players[0].incrementPoints();
         players[0].incrementPoints();
         players[1].incrementPoints();
@@ -67,7 +67,7 @@ public class Table {
         return getPlayerMoves(players[playerTurn]);
     }
     private Move isAMove(Player player, int x, int y){
-        if(table[x][y].hasOwner())
+        if(table[x][y]!=-1)
             return null;
         Move aux = new Move(player,x,y);
         for(Directions dir: Directions.values()){
@@ -75,7 +75,7 @@ public class Table {
             int auxY=y+dir.getY();
             // si hacia esa direccion esta fuera de los limites o hacia esa direccion la pieza es del jugador
             // o no hay pieza salteamos la direccion
-            if (isIn(auxX,auxY) && table[auxX][auxY].hasOwner() && !table[auxX][auxY].isOwner(player))
+            if (isIn(auxX,auxY) && table[auxX][auxY]!=-1 && table[auxX][auxY] != player.getId())
                 goInDir(dir,player,auxX,auxY,aux);
         }
         if(aux.isValid())
@@ -86,12 +86,12 @@ public class Table {
         turnMoves=getMoves();
     }
     private boolean goInDir(Directions dir, Player player, int x, int y, Move move){
-        if (!isIn(x,y) || !table[x][y].hasOwner())
+        if (!isIn(x,y) || table[x][y] == -1)
             return false;
-        if (table[x][y].isOwner(player))
+        if (table[x][y] == player.getId())
             return true;
         if(goInDir(dir, player, x+dir.getX(), y+dir.getY(), move)) {
-            move.addTab(table[x][y]);
+            move.addTab(x,y);
             return true;
         }
         return false;
@@ -101,7 +101,7 @@ public class Table {
         StringBuilder aux = new StringBuilder();
         for(int i=0; i<size; i++){
             for(int j=0; j<size; j++){
-                aux.append(table[i][j].toString());
+                aux.append(table[i][j]);
             }
             aux.append("\n");
         }
@@ -126,11 +126,11 @@ public class Table {
         else{
             Move move=turnMoves.get(p);
             System.out.println(p.getX()+" "+ p.getY());
-            table[move.getX()][move.getY()].setOwner(move.getPlayer());
+            table[move.getSelected().getX()][move.getSelected().getY()] = move.getPlayer().getId();
             move.getPlayer().incrementPoints();
-            for(GameTab tab: move.getTabs()) {
-                tab.getOwner().decrementPoints();
-                tab.setOwner(move.getPlayer());
+            for(Point tab: move.getTabs()){
+                players[table[tab.getX()][tab.getY()]].decrementPoints();
+                table[tab.getX()][tab.getY()] = move.getPlayer().getId();
                 move.getPlayer().incrementPoints();
             }
             undoMoves.push(move);
@@ -139,12 +139,12 @@ public class Table {
     }
     public boolean undoMove(){
         Move aux = undoMoves.pop();
-        table[aux.getX()][aux.getY()].setOwner(null);
+        table[aux.getSelected().getX()][aux.getSelected().getY()] = -1;
         aux.getPlayer().decrementPoints();
-        for(GameTab tab: aux.getTabs()) {
-            tab.getOwner().decrementPoints();
-            tab.setOwner(players[(aux.getPlayer().getId() + 1) % playerQty]);
-            tab.getOwner().incrementPoints();
+        for(Point tab: aux.getTabs()) {
+            players[table[tab.getX()][tab.getY()]].decrementPoints();
+            table[tab.getX()][tab.getY()] = players[(aux.getPlayer().getId() + 1) % playerQty].getId();
+            players[table[tab.getX()][tab.getY()]].incrementPoints();
         }
         return true;
     }
@@ -157,7 +157,7 @@ public class Table {
     public int getPlayerQty(){
         return playerQty;
     }
-    public GameTab[][] getBoard(){
+    public int[][] getBoard(){
         return table;
     }
     public Stack<Move> getUndoMoves(){return undoMoves;}
