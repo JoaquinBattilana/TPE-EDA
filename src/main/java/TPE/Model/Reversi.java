@@ -131,9 +131,9 @@ public class Reversi {
                 m = actual;
             }
             beta = Math.min(beta, m);
+            board.applyReverseMove(move);
             if(prune && alpha >= beta)
                 break;
-            board.applyReverseMove(move);
         }
         return m;
     }
