@@ -26,4 +26,8 @@ public class Point {
         Point aux = (Point) o;
         return (aux.x==this.x && aux.y==this.y);
     }
+    @Override
+    public String toString(){
+        return "" + x + "," + y;
+    }
 }

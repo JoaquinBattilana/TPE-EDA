@@ -19,6 +19,11 @@ public class Move {
         points++;
         moveTabs.add(new Point(x,y));
     }
+
+    public String toString(){
+        return "selecccionado: " + selected.toString() + moveTabs.toString();
+    }
+
     public boolean isValid(){
         return !moveTabs.isEmpty();
     }

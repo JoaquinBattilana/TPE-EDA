@@ -52,16 +52,6 @@ public class Reversi {
     public void nextTurn(){
         playerTurn=(playerTurn+1)%playerQty;
         turnMoves=board.getMoves(players[playerTurn]);
-        if(players[playerTurn].isIa()) {
-            try {
-                TimeUnit.SECONDS.sleep(4);
-            }
-            catch(Exception e){
-
-            }
-            board.applyMove(getBestDeepthMove(5));
-            nextTurn();
-        }
     }
 
     public boolean applyMove(int x,  int y) {
@@ -97,7 +87,7 @@ public class Reversi {
         Point bestMove=null;
         for(Point move: turnMoves.keySet()){
             Board aux = board.getCopy();
-            board.applyMove(turnMoves.get(move));
+            aux.applyMove(turnMoves.get(move));
             if((actual=deepthMiniMax(aux, players[(playerTurn+1)%playerQty],false, deepth))>min){
                 min = actual;
                 bestMove=move;
@@ -124,7 +114,7 @@ public class Reversi {
             m=Integer.MIN_VALUE;
             for(Move move: moves){
                 Board aux = board.getCopy();
-                board.applyMove(move);
+                aux.applyMove(move);
                 if((actual=deepthMiniMax(aux, players[(playerTurn.getId()+1)%playerQty],false, deepth-1))>m){
                     m = actual;
                 }
@@ -134,7 +124,7 @@ public class Reversi {
         m=Integer.MAX_VALUE;
         for(Move move: moves){
             Board aux = board.getCopy();
-            board.applyMove(move);
+            aux.applyMove(move);
             if((actual=deepthMiniMax(aux, players[(playerTurn.getId()+1)%playerQty],true, deepth-1))<m){
                 m = actual;
             }
