@@ -70,6 +70,11 @@ public class TableController implements Initializable {
         }
         showPosibleMoves();
         refreshPoints();
+        while(model.makeIaMove(3,false) && !model.gameFinished()){
+            model.nextTurn();
+            refreshCircleColors();
+            refreshPoints();
+        }
     }
 
     private void addCircle(int i, int j) {
@@ -89,7 +94,6 @@ public class TableController implements Initializable {
                 model.nextTurn();
                 refreshCircleColors();
                 refreshPoints();
-                System.out.println(model.getBestDeepthMove(6,true));
                 if(model.gameFinished()) {
                     if(model.getPlayers()[0].getPoints()==model.getPlayers()[1].getPoints())
                         winText.setText("Es un empate");
@@ -97,6 +101,12 @@ public class TableController implements Initializable {
                         winText.setText("El ganador es el jugador 1");
                     else
                         winText.setText("El ganador es el jugador 2");
+                }
+                if(model.makeIaMove(3,true)){
+                    model.nextTurn();
+                    refreshCircleColors();
+                    refreshPoints();
+                    System.out.println(model.getDotTree());
                 }
             }
         });

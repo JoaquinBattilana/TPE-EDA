@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Reversi {
+    private StringBuilder dotTree=null;
     int size;
     Board board;
     private int playerQty=0;
@@ -15,6 +16,7 @@ public class Reversi {
     private Map<Point, Move> turnMoves;
 
     public Reversi(int n){  // inicia el tablero
+        dotTree = new StringBuilder();
         undoMoves = new Stack<>();
         players = new Player[2];
         board = new Board(n);
@@ -86,8 +88,9 @@ public class Reversi {
         int min=Integer.MIN_VALUE;
         Point bestMove=null;
         for(Point move: turnMoves.keySet()){
+            dotTree.append("\n" + move.toString());
             board.applyMove(turnMoves.get(move));
-            if ((actual = deepthMiniMax(board, players[(playerTurn + 1) % playerQty], false, deepth-1, prune, Integer.MIN_VALUE,Integer.MAX_VALUE)) > min) {
+            if ((actual = deepthMiniMax(board, players[(playerTurn + 1) % playerQty], false, deepth-1, prune, Integer.MIN_VALUE,Integer.MAX_VALUE)) >= min) {
                 min = actual;
                 bestMove = move;
             }
@@ -98,14 +101,11 @@ public class Reversi {
 
     public int deepthMiniMax(Board board, Player playerTurn, boolean max, int deepth, boolean prune, int alpha, int beta){
         if(deepth==0)
-            return heuristic(board,playerTurn);
+            return heuristic(board,playerTurn,max);
         List<Move> moves = new ArrayList<>(board.getMoves(playerTurn).values());
         if(moves.isEmpty()){
-            if(board.getMoves(players[(playerTurn.getId()+1)%2]).isEmpty()){
-                if(max)
-                    return Integer.MAX_VALUE;
-                return Integer.MIN_VALUE;
-            }
+            if(gameFinished())
+                return heuristic(board,playerTurn,max);
             return deepthMiniMax(board, players[(playerTurn.getId()+1)%2], !max,deepth-1, prune, alpha, beta);
         }
         int actual;
@@ -114,7 +114,7 @@ public class Reversi {
             m=Integer.MIN_VALUE;
             for(Move move: moves){
                 board.applyMove(move);
-                if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],false, deepth-1, prune, alpha, beta))>m){
+                if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],false, deepth-1, prune, alpha, beta))>=m){
                     m = actual;
                 }
                 alpha = Math.max(alpha, m);
@@ -127,7 +127,7 @@ public class Reversi {
         m=Integer.MAX_VALUE;
         for(Move move: moves){
             board.applyMove(move);
-            if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],true, deepth-1,prune, alpha, beta))<m){
+            if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],true, deepth-1,prune, alpha, beta))<=m){
                 m = actual;
             }
             beta = Math.min(beta, m);
@@ -138,8 +138,34 @@ public class Reversi {
         return m;
     }
 
-    public int heuristic(Board b,Player player){
-        return b.getMoves(player).size();
+    public int heuristic(Board b,Player player, boolean max){
+        int rta;
+        if(gameFinished()){
+            if(max)
+                rta = Integer.MAX_VALUE;
+            else
+                rta = Integer.MIN_VALUE;
+        }
+        else
+            rta = b.getMoves(player).size();
+        return rta;
+    }
+
+    public boolean makeIaMove(int deepth, boolean prune){
+        if (players[playerTurn].isIa()){
+            dotTree = new StringBuilder();
+            dotTree.append("graph ia_move {");
+            if(!turnMoves.isEmpty()){
+                Move aux = getBestDeepthMove(deepth, prune);
+                board.applyMove(aux);
+                aux.getPlayer().incrementNPoints(aux.getPoints());
+                players[(aux.getPlayer().getId()+1)%playerQty].decrementNPoints(aux.getPoints()-1);
+                undoMoves.push(aux);
+            }
+            dotTree.append("}");
+            return true;
+        }
+        return false;
     }
 
     public Player[] getPlayers(){
@@ -154,6 +180,10 @@ public class Reversi {
 
     public Map<Point,Move> getMoves(){
         return turnMoves;
+    }
+
+    public String getDotTree(){
+        return dotTree.toString();
     }
 
     public Stack<Move> getUndoMoves(){return undoMoves;}

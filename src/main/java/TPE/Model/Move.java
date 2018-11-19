@@ -21,7 +21,7 @@ public class Move {
     }
 
     public String toString(){
-        return "selecccionado: " + selected.toString() + moveTabs.toString();
+        return selected.toString();
     }
 
     public boolean isValid(){
