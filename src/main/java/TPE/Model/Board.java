@@ -1,10 +1,12 @@
 package TPE.Model;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Board {
+public class Board implements Serializable {
     private int[][] table; // tablero
     int size;
 
@@ -17,6 +19,7 @@ public class Board {
             }
         }
     }
+
     public void setTab(int x, int y, int playerId){
         table[x][y] = playerId;
     }
@@ -91,5 +94,9 @@ public class Board {
             table[tab.getX()][tab.getY()]=(table[tab.getX()][tab.getY()] + 1 )% 2;
         }
     }
+    public int getSize(){
+        return size;
+    }
+
 }
 

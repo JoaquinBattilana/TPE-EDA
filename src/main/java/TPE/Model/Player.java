@@ -42,5 +42,8 @@ public class Player {
         return points;
     }
     public boolean isIa(){return ia;}
+    public void setPoints(int n){
+        this.points=n;
+    }
     public Color getColor(){return color;};
 }

@@ -1,4 +1,5 @@
 package TPE.Controller;
+import TPE.Exceptions.ExceptionPopup;
 import TPE.Model.Point;
 import TPE.Model.Reversi;
 import javafx.beans.binding.Bindings;
@@ -12,8 +13,13 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ResourceBundle;
 
 public class TableController implements Initializable {
@@ -37,6 +43,8 @@ public class TableController implements Initializable {
     private Circle player2Circle;
     @FXML
     private Text winText;
+    @FXML
+    private Button saveButton;
 
     public void initModel(Reversi model){
 
@@ -151,5 +159,21 @@ public class TableController implements Initializable {
     public void passAction(){
         model.nextTurn();
         refreshCircleColors();
+    }
+    public void saveAction(){
+        try {
+            FileChooser fileChooser = new FileChooser();
+            Stage stage = new Stage();
+            File file = fileChooser.showSaveDialog(stage);
+            if(file!=null) {
+                ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file.toPath()));
+                out.writeObject(model.getBoard());
+                out.close();
+            }
+        }
+        catch(Exception e){
+            ExceptionPopup alert = new ExceptionPopup(e);
+            alert.showAndWait();
+        }
     }
 }

@@ -22,6 +22,15 @@ public class Reversi {
         board = new Board(n);
         size=n;
     }
+
+    public Reversi(Board b){
+        this.board=b;
+        size=board.getSize();
+        dotTree = new StringBuilder();
+        undoMoves = new Stack<>();
+        players = new Player[2];
+    }
+
     public boolean gameFinished(){
         boolean flag=true;
         for(int i=0; i<playerQty && flag; i++){
@@ -36,10 +45,14 @@ public class Reversi {
         board.setTab(size/2,(size/2)-1,0);
         board.setTab((size/2)-1,size/2,1);
         board.setTab(size/2,size/2,1);
-        players[0].incrementPoints();
-        players[0].incrementPoints();
-        players[1].incrementPoints();
-        players[1].incrementPoints();
+    }
+    public void setPlayerPoints(){
+        for(int i=0; i<size; i++){
+            for(int j=0; j<size; j++){
+                if(board.getTable()[i][j]!=-1)
+                    players[board.getTable()[i][j]].incrementPoints();
+            }
+        }
     }
 
     public int addPlayer(Color color, boolean ia){
@@ -88,7 +101,7 @@ public class Reversi {
         int min=Integer.MIN_VALUE;
         Point bestMove=null;
         for(Point move: turnMoves.keySet()){
-            dotTree.append("\n" + move.toString());
+            dotTree.append("\n" + "START--"+ move.toString() + "--");
             board.applyMove(turnMoves.get(move));
             if ((actual = deepthMiniMax(board, players[(playerTurn + 1) % playerQty], false, deepth-1, prune, Integer.MIN_VALUE,Integer.MAX_VALUE)) >= min) {
                 min = actual;
@@ -100,12 +113,18 @@ public class Reversi {
     }
 
     public int deepthMiniMax(Board board, Player playerTurn, boolean max, int deepth, boolean prune, int alpha, int beta){
-        if(deepth==0)
-            return heuristic(board,playerTurn,max);
+        if(deepth==0) {
+            int rta = heuristic(board, playerTurn, max);
+            dotTree.append("label=["+rta+ "]" + "\n");
+            return rta;
+        }
         List<Move> moves = new ArrayList<>(board.getMoves(playerTurn).values());
         if(moves.isEmpty()){
-            if(gameFinished())
-                return heuristic(board,playerTurn,max);
+            if(gameFinished()) {
+                int rta = heuristic(board, playerTurn, max);
+                dotTree.append("label=["+rta+ "]" + "\n");
+                return rta;
+            }
             return deepthMiniMax(board, players[(playerTurn.getId()+1)%2], !max,deepth-1, prune, alpha, beta);
         }
         int actual;
@@ -113,6 +132,7 @@ public class Reversi {
         if(max){
             m=Integer.MIN_VALUE;
             for(Move move: moves){
+                dotTree.append(move.toString()+ "--");
                 board.applyMove(move);
                 if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],false, deepth-1, prune, alpha, beta))>=m){
                     m = actual;
@@ -126,6 +146,7 @@ public class Reversi {
         }
         m=Integer.MAX_VALUE;
         for(Move move: moves){
+            dotTree.append(move.toString()+ "--");
             board.applyMove(move);
             if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],true, deepth-1,prune, alpha, beta))<=m){
                 m = actual;

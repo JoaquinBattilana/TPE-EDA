@@ -29,6 +29,7 @@
             <Text fx:id="player1Points" layoutX="111.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" />
             <Text fx:id="player2Points" layoutX="111.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" />
             <Text fx:id="winText" fill="RED" layoutX="14.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" textOrigin="CENTER" wrappingWidth="124.0" />
+            <Button fx:id="saveButton" layoutX="49.0" layoutY="242.0" mnemonicParsing="false" onAction="#saveAction" text="SAVE" />
          </children>
       </AnchorPane>
    </children>
