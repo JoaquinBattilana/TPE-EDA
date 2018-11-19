@@ -1,7 +1,7 @@
 package TPE;
 
 import TPE.Controller.TableController;
-import TPE.Model.Table;
+import TPE.Model.Reversi;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,7 +15,7 @@ public class App extends Application
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Table t = new Table(8);
+        Reversi t = new Reversi(8);
         t.addPlayer(Color.WHITE,false);
         t.addPlayer(Color.BLACK, false);
         t.setInitialPos();

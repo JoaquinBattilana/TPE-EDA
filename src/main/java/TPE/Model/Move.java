@@ -7,13 +7,16 @@ public class Move {
     Point selected;
     private Player player;
     private List<Point> moveTabs;
+    int points;
 
     public Move(Player player, int x, int y){
+        points=1;
         selected = new Point(x,y);
         this.player=player;
         moveTabs= new LinkedList<>();
     }
     public void addTab(int x, int y){
+        points++;
         moveTabs.add(new Point(x,y));
     }
     public boolean isValid(){
@@ -28,4 +31,5 @@ public class Move {
     public Point getSelected(){
         return selected;
     }
+    public int getPoints(){return points;};
 }

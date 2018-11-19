@@ -1,13 +1,10 @@
 package TPE.Controller;
-import TPE.Model.Move;
-import TPE.Model.Player;
 import TPE.Model.Point;
-import TPE.Model.Table;
+import TPE.Model.Reversi;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -17,13 +14,10 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class TableController implements Initializable {
-    private Table model;
+    private Reversi model;
     private Circle[][] tabs;
     private NumberBinding radioSize;
 
@@ -44,7 +38,7 @@ public class TableController implements Initializable {
     @FXML
     private Text winText;
 
-    public void initModel(Table model){
+    public void initModel(Reversi model){
 
         this.model=model;
         tabs = new Circle[model.getSize()][model.getSize()];
@@ -82,8 +76,8 @@ public class TableController implements Initializable {
         System.out.println(i+" "+j);
         Circle circle = new Circle(20);
         circle.radiusProperty().bind(board.widthProperty());
-        if(model.getBoard()[i][j] != -1) {
-            circle.setFill(model.getPlayers()[model.getBoard()[i][j]].getColor());
+        if(model.getBoard().getTable()[i][j] != -1) {
+            circle.setFill(model.getPlayers()[model.getBoard().getTable()[i][j]].getColor());
             circle.setStroke(Color.BLACK);
         }
         else {
@@ -114,8 +108,8 @@ public class TableController implements Initializable {
     private void refreshCircleColors(){
         for (int i = 0 ; i < model.getSize() ; i++) {
             for (int j = 0; j < model.getSize(); j++) {
-                if (model.getBoard()[i][j]!= -1) {
-                    tabs[i][j].setFill(model.getPlayers()[model.getBoard()[i][j]].getColor());
+                if (model.getBoard().getTable()[i][j]!= -1) {
+                    tabs[i][j].setFill(model.getPlayers()[model.getBoard().getTable()[i][j]].getColor());
                     tabs[i][j].setStroke(Color.BLACK);
                 }
                 else{

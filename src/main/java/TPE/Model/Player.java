@@ -23,6 +23,12 @@ public class Player {
         Player aux = (Player) o;
         return aux.playerId==this.playerId;
     }
+    public void incrementNPoints(int n){
+        points+=n;
+    }
+    public void decrementNPoints(int n){
+        points-=n;
+    }
     public int getId(){
         return playerId;
     }
