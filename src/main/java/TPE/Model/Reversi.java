@@ -3,6 +3,7 @@ package TPE.Model;
 import javafx.scene.paint.Color;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Reversi {
     int size;
@@ -51,6 +52,16 @@ public class Reversi {
     public void nextTurn(){
         playerTurn=(playerTurn+1)%playerQty;
         turnMoves=board.getMoves(players[playerTurn]);
+        if(players[playerTurn].isIa()) {
+            try {
+                TimeUnit.SECONDS.sleep(4);
+            }
+            catch(Exception e){
+
+            }
+            board.applyMove(getBestDeepthMove(5));
+            nextTurn();
+        }
     }
 
     public boolean applyMove(int x,  int y) {
@@ -78,16 +89,62 @@ public class Reversi {
     public int getSize(){
         return size;
     }
-/*
-    public Move getBestDeepthMove(){
-        int aux;
+
+
+    public Move getBestDeepthMove(int deepth){
+        int actual;
         int min=Integer.MIN_VALUE;
-        Point bestMove;
+        Point bestMove=null;
         for(Point move: turnMoves.keySet()){
-            if(aux=deepthMinimax(board))
+            Board aux = board.getCopy();
+            board.applyMove(turnMoves.get(move));
+            if((actual=deepthMiniMax(aux, players[(playerTurn+1)%playerQty],false, deepth))>min){
+                min = actual;
+                bestMove=move;
+            }
         }
+        return turnMoves.get(bestMove);
     }
-*/
+
+    public int deepthMiniMax(Board board, Player playerTurn, boolean max, int deepth){
+        if(deepth==0)
+            return heuristic(board,playerTurn);
+        List<Move> moves = new ArrayList<>(board.getMoves(playerTurn).values());
+        if(moves.isEmpty()){
+            if(board.getMoves(players[(playerTurn.getId()+1)%2]).isEmpty()){
+                if(max)
+                    return Integer.MAX_VALUE;
+                return Integer.MIN_VALUE;
+            }
+            return deepthMiniMax(board, players[(playerTurn.getId()+1)%2], !max,deepth-1);
+        }
+        int actual;
+        int m;
+        if(max){
+            m=Integer.MIN_VALUE;
+            for(Move move: moves){
+                Board aux = board.getCopy();
+                board.applyMove(move);
+                if((actual=deepthMiniMax(aux, players[(playerTurn.getId()+1)%playerQty],false, deepth-1))>m){
+                    m = actual;
+                }
+            }
+            return m;
+        }
+        m=Integer.MAX_VALUE;
+        for(Move move: moves){
+            Board aux = board.getCopy();
+            board.applyMove(move);
+            if((actual=deepthMiniMax(aux, players[(playerTurn.getId()+1)%playerQty],true, deepth-1))<m){
+                m = actual;
+            }
+        }
+        return m;
+    }
+
+    public int heuristic(Board b,Player player){
+        return b.getMoves(player).size();
+    }
 
     public Player[] getPlayers(){
         return players;

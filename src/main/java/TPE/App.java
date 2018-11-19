@@ -17,7 +17,7 @@ public class App extends Application
     public void start(Stage primaryStage) throws Exception{
         Reversi t = new Reversi(8);
         t.addPlayer(Color.WHITE,false);
-        t.addPlayer(Color.BLACK, false);
+        t.addPlayer(Color.BLACK, true);
         t.setInitialPos();
         t.start();
         System.out.println(t);

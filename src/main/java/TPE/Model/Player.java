@@ -41,5 +41,6 @@ public class Player {
     public int getPoints(){
         return points;
     }
+    public boolean isIa(){return ia;}
     public Color getColor(){return color;};
 }
