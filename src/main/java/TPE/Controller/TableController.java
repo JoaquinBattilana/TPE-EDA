@@ -78,15 +78,16 @@ public class TableController implements Initializable {
         }
         showPosibleMoves();
         refreshPoints();
-        while(model.makeIaMove(3,false) && !model.gameFinished()){
+        long start = System.nanoTime();
+        while(model.makeIaMove() && !model.gameFinished()){
             model.nextTurn();
             refreshCircleColors();
             refreshPoints();
         }
+        System.out.println(System.nanoTime()-start);
     }
 
     private void addCircle(int i, int j) {
-        System.out.println(i+" "+j);
         Circle circle = new Circle(20);
         circle.radiusProperty().bind(board.widthProperty());
         if(model.getBoard().getTable()[i][j] != -1) {
@@ -110,11 +111,10 @@ public class TableController implements Initializable {
                     else
                         winText.setText("El ganador es el jugador 2");
                 }
-                if(model.makeIaMove(3,true)){
+                if(model.makeIaMove()){
                     model.nextTurn();
                     refreshCircleColors();
                     refreshPoints();
-                    System.out.println(model.getDotTree());
                 }
             }
         });

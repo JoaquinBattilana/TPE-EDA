@@ -5,7 +5,10 @@ import javafx.scene.paint.Color;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class Reversi {
+public class Reversi{
+    private boolean prune;
+    private int param;
+    private boolean mode; // si es true es modo de profundidad, si no es modo de tiempo
     private StringBuilder dotTree=null;
     int size;
     Board board;
@@ -29,6 +32,14 @@ public class Reversi {
         dotTree = new StringBuilder();
         undoMoves = new Stack<>();
         players = new Player[2];
+    }
+
+    public void setParam(boolean type, int n){
+        mode=type;
+        this.param=n;
+    }
+    public void setPrune(boolean prune){
+        this.prune=prune;
     }
 
     public boolean gameFinished(){
@@ -96,14 +107,25 @@ public class Reversi {
     }
 
 
-    public Move getBestDeepthMove(int deepth, boolean prune){
+    public Move getBestTimeMove(int time){
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + time*1000;
+        Move best=null;
+        for(int i=0; startTime<endTime; i++){
+            best=getBestDeepthMove(i);
+        }
+        return best;
+    }
+
+
+    public Move getBestDeepthMove(int deepth){
         int actual;
         int min=Integer.MIN_VALUE;
         Point bestMove=null;
         for(Point move: turnMoves.keySet()){
             dotTree.append("\n" + "START--"+ move.toString() + "--");
             board.applyMove(turnMoves.get(move));
-            if ((actual = deepthMiniMax(board, players[(playerTurn + 1) % playerQty], false, deepth-1, prune, Integer.MIN_VALUE,Integer.MAX_VALUE)) >= min) {
+            if ((actual = deepthMiniMax(board, players[(playerTurn + 1) % playerQty], false, deepth-1, Integer.MIN_VALUE,Integer.MAX_VALUE)) >= min) {
                 min = actual;
                 bestMove = move;
             }
@@ -112,7 +134,7 @@ public class Reversi {
         return turnMoves.get(bestMove);
     }
 
-    public int deepthMiniMax(Board board, Player playerTurn, boolean max, int deepth, boolean prune, int alpha, int beta){
+    public int deepthMiniMax(Board board, Player playerTurn, boolean max, int deepth, int alpha, int beta){
         if(deepth==0) {
             int rta = heuristic(board, playerTurn, max);
             dotTree.append("label=["+rta+ "]" + "\n");
@@ -125,7 +147,7 @@ public class Reversi {
                 dotTree.append("label=["+rta+ "]" + "\n");
                 return rta;
             }
-            return deepthMiniMax(board, players[(playerTurn.getId()+1)%2], !max,deepth-1, prune, alpha, beta);
+            return deepthMiniMax(board, players[(playerTurn.getId()+1)%2], !max,deepth-1, alpha, beta);
         }
         int actual;
         int m;
@@ -134,7 +156,7 @@ public class Reversi {
             for(Move move: moves){
                 dotTree.append(move.toString()+ "--");
                 board.applyMove(move);
-                if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],false, deepth-1, prune, alpha, beta))>=m){
+                if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],false, deepth-1, alpha, beta))>=m){
                     m = actual;
                 }
                 alpha = Math.max(alpha, m);
@@ -148,7 +170,7 @@ public class Reversi {
         for(Move move: moves){
             dotTree.append(move.toString()+ "--");
             board.applyMove(move);
-            if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],true, deepth-1,prune, alpha, beta))<=m){
+            if((actual=deepthMiniMax(board, players[(playerTurn.getId()+1)%playerQty],true, deepth-1, alpha, beta))<=m){
                 m = actual;
             }
             beta = Math.min(beta, m);
@@ -172,12 +194,18 @@ public class Reversi {
         return rta;
     }
 
-    public boolean makeIaMove(int deepth, boolean prune){
+    public boolean makeIaMove(){
         if (players[playerTurn].isIa()){
             dotTree = new StringBuilder();
             dotTree.append("graph ia_move {");
             if(!turnMoves.isEmpty()){
-                Move aux = getBestDeepthMove(deepth, prune);
+                Move aux;
+                if(mode) {
+                    aux = getBestDeepthMove(param);
+                }
+                else{
+                    aux = getBestTimeMove(param);
+                }
                 board.applyMove(aux);
                 aux.getPlayer().incrementNPoints(aux.getPoints());
                 players[(aux.getPlayer().getId()+1)%playerQty].decrementNPoints(aux.getPoints()-1);

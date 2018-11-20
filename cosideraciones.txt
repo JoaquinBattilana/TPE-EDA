@@ -1,8 +1,0 @@
-eleji hacer uan clase player para tener mas expansibilidad del codigo, podrian ser solo ID
-lo mismo con las fichas
-para el undo se me ocurrieron dos cosas, guardar el tablero o guardar las fichas que fueron afectadas, me decidi por la segunda ya que creo que es menos el espacio que ocupan
-y es de menor tiempo cambiarlas. Esto es porque fijandome no solo me alcanzaba con la posicion donde se hacia la jugada para revertir.
-para la poda alfa y beta decidi hacer otra funcion porque como minimax es algo que se va a ejecutar miles y miles de veces no me parecio bien tener que
-preguntar todo el tiempo en la funcion si la poda esta activada
-
-calcular tiempo entre hacer movida y deshacer movida comparado con copiar tablero.
