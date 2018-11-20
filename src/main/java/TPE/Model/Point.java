@@ -28,6 +28,6 @@ public class Point {
     }
     @Override
     public String toString(){
-        return "label=[" + "\"(" + x + "," + y + ")\"" + "]";
+        return "\"(" + x + "," + y + ")\"";
     }
 }

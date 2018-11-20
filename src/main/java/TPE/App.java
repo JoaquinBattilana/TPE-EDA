@@ -58,20 +58,20 @@ public class App extends Application
         }
         switch(ai){
             case 0:
-                t.addPlayer(Color.WHITE,false);
-                t.addPlayer(Color.BLACK, false);
+                t.addPlayer(Color.BLACK,false);
+                t.addPlayer(Color.WHITE, false);
                 break;
             case 1:
-                t.addPlayer(Color.WHITE,true);
-                t.addPlayer(Color.BLACK, false);
+                t.addPlayer(Color.BLACK,true);
+                t.addPlayer(Color.WHITE, false);
                 break;
             case 2:
-                t.addPlayer(Color.WHITE,false);
-                t.addPlayer(Color.BLACK, true);
+                t.addPlayer(Color.BLACK,false);
+                t.addPlayer(Color.WHITE, true);
                 break;
             case 3:
-                t.addPlayer(Color.WHITE, true);
                 t.addPlayer(Color.BLACK, true);
+                t.addPlayer(Color.WHITE, true);
         }
         switch(searchtype){
             case TIME:

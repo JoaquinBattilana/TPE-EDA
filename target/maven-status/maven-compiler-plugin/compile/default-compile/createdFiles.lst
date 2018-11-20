@@ -1,0 +1,11 @@
+TPE\Model\Player.class
+TPE\App.class
+TPE\Model\Board.class
+TPE\Exceptions\ExceptionPopup.class
+TPE\Model\Move.class
+TPE\Model\Point.class
+TPE\App$SEARCHTYPE.class
+TPE\Model\Directions.class
+TPE\Controller\TableController.class
+TPE\App$1.class
+TPE\Model\Reversi.class

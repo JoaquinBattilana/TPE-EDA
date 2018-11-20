@@ -17,7 +17,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
@@ -45,73 +47,72 @@ public class TableController implements Initializable {
     private Text winText;
     @FXML
     private Button saveButton;
+    @FXML
+    private Button dotButton;
 
-    public void initModel(Reversi model){
+    public void initModel(Reversi model) {
 
-        this.model=model;
+        this.model = model;
         tabs = new Circle[model.getSize()][model.getSize()];
     }
 
     @Override
-    public void initialize(URL location, ResourceBundle resources){
+    public void initialize(URL location, ResourceBundle resources) {
         board.setStyle("-fx-background-color: #008000;");
     }
 
-    public void setView(){
+    public void setView() {
         player1Circle.setFill(model.getPlayers()[0].getColor());
         player2Circle.setFill(model.getPlayers()[1].getColor());
-        for (int i = 0; i < model.getSize()-1; i++) {
+        for (int i = 0; i < model.getSize() - 1; i++) {
             RowConstraints rowConst = new RowConstraints();
             rowConst.setPercentHeight(100.0 / model.getSize());
             board.getRowConstraints().add(rowConst);
         }
-        for (int i = 0; i < model.getSize()-1; i++) {
+        for (int i = 0; i < model.getSize() - 1; i++) {
             ColumnConstraints colConst = new ColumnConstraints();
             colConst.setPercentWidth(100.0 / model.getSize());
             board.getColumnConstraints().add(colConst);
         }
         radioSize = Bindings.min(board.heightProperty().divide(model.getSize()), board.widthProperty().divide(model.getSize()));
-        for (int i = 0 ; i < model.getSize() ; i++) {
+        for (int i = 0; i < model.getSize(); i++) {
             for (int j = 0; j < model.getSize(); j++) {
-                addCircle(i,j);
+                addCircle(i, j);
             }
         }
         showPosibleMoves();
         refreshPoints();
-        long start = System.nanoTime();
-        while(model.makeIaMove() && !model.gameFinished()){
+        while (model.makeIaMove() && !model.gameFinished()) {
             model.nextTurn();
             refreshCircleColors();
             refreshPoints();
         }
-        System.out.println(System.nanoTime()-start);
     }
 
     private void addCircle(int i, int j) {
         Circle circle = new Circle(20);
         circle.radiusProperty().bind(board.widthProperty());
-        if(model.getBoard().getTable()[i][j] != -1) {
+        if (model.getBoard().getTable()[i][j] != -1) {
             circle.setFill(model.getPlayers()[model.getBoard().getTable()[i][j]].getColor());
             circle.setStroke(Color.BLACK);
-        }
-        else {
+        } else {
             circle.setFill(Color.GREEN);
             circle.setStroke(Color.GREEN);
         }
         circle.setOnMouseClicked(e -> {
-            if(model.applyMove(i,j)) {
+            if (model.applyMove(i, j)) {
                 model.nextTurn();
                 refreshCircleColors();
                 refreshPoints();
-                if(model.gameFinished()) {
-                    if(model.getPlayers()[0].getPoints()==model.getPlayers()[1].getPoints())
+                if (model.gameFinished()) {
+                    if (model.getPlayers()[0].getPoints() == model.getPlayers()[1].getPoints())
                         winText.setText("Es un empate");
-                    else if (model.getPlayers()[0].getPoints()>model.getPlayers()[1].getPoints())
+                    else if (model.getPlayers()[0].getPoints() > model.getPlayers()[1].getPoints())
                         winText.setText("El ganador es el jugador 1");
                     else
                         winText.setText("El ganador es el jugador 2");
                 }
-                if(model.makeIaMove()){
+                if (model.makeIaMove()) {
                     model.nextTurn();
                     refreshCircleColors();
                     refreshPoints();
@@ -124,14 +125,14 @@ public class TableController implements Initializable {
         tabs[i][j] = circle;
 
     }
-    private void refreshCircleColors(){
-        for (int i = 0 ; i < model.getSize() ; i++) {
+
+    private void refreshCircleColors() {
+        for (int i = 0; i < model.getSize(); i++) {
             for (int j = 0; j < model.getSize(); j++) {
-                if (model.getBoard().getTable()[i][j]!= -1) {
+                if (model.getBoard().getTable()[i][j] != -1) {
                     tabs[i][j].setFill(model.getPlayers()[model.getBoard().getTable()[i][j]].getColor());
                     tabs[i][j].setStroke(Color.BLACK);
-                }
-                else{
+                } else {
                     tabs[i][j].setFill(Color.GREEN);
                     tabs[i][j].setStroke(Color.GREEN);
                 }
@@ -139,39 +140,58 @@ public class TableController implements Initializable {
         }
         showPosibleMoves();
     }
-    private void showPosibleMoves(){
-        for(Point aux: model.getMoves().keySet()){
+
+    private void showPosibleMoves() {
+        for (Point aux : model.getMoves().keySet()) {
             tabs[aux.getX()][aux.getY()].setStroke(Color.BLACK);
         }
     }
-    private void refreshPoints(){
+
+    private void refreshPoints() {
         player1Points.setText(Integer.toString(model.getPlayers()[0].getPoints()));
         player2Points.setText(Integer.toString(model.getPlayers()[1].getPoints()));
     }
-    public void undoAction(){
-        if(!model.getUndoMoves().empty()) {
+
+    public void undoAction() {
+        if (!model.getUndoMoves().empty()) {
             model.undoMove();
             model.nextTurn();
             refreshPoints();
             refreshCircleColors();
         }
     }
-    public void passAction(){
+
+    public void passAction() {
         model.nextTurn();
         refreshCircleColors();
     }
-    public void saveAction(){
+
+    public void saveAction() {
         try {
             FileChooser fileChooser = new FileChooser();
             Stage stage = new Stage();
             File file = fileChooser.showSaveDialog(stage);
-            if(file!=null) {
+            if (file != null) {
                 ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file.toPath()));
                 out.writeObject(model.getBoard());
                 out.close();
             }
+        } catch (Exception e) {
+            ExceptionPopup alert = new ExceptionPopup(e);
+            alert.showAndWait();
         }
-        catch(Exception e){
+    }
+    public void dotAction(){
+        try {
+            FileChooser fileChooser = new FileChooser();
+            Stage stage = new Stage();
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                try (PrintStream out = new PrintStream(new FileOutputStream(file.getPath()))) {
+                    out.print(model.getDotTree());
+                }
+            }
+        } catch (Exception e) {
             ExceptionPopup alert = new ExceptionPopup(e);
             alert.showAndWait();
         }

@@ -53,9 +53,9 @@ public class Reversi{
 
     public void setInitialPos(){
         board.setTab((size/2)-1,(size/2)-1,0);
-        board.setTab(size/2,(size/2)-1,0);
+        board.setTab(size/2,(size/2)-1,1);
         board.setTab((size/2)-1,size/2,1);
-        board.setTab(size/2,size/2,1);
+        board.setTab(size/2,size/2,0);
     }
     public void setPlayerPoints(){
         for(int i=0; i<size; i++){
@@ -137,14 +137,14 @@ public class Reversi{
     public int deepthMiniMax(Board board, Player playerTurn, boolean max, int deepth, int alpha, int beta){
         if(deepth==0) {
             int rta = heuristic(board, playerTurn, max);
-            dotTree.append("label=["+rta+ "]" + "\n");
+            dotTree.append(""+ rta+ "\n");
             return rta;
         }
         List<Move> moves = new ArrayList<>(board.getMoves(playerTurn).values());
         if(moves.isEmpty()){
             if(gameFinished()) {
                 int rta = heuristic(board, playerTurn, max);
-                dotTree.append("label=["+rta+ "]" + "\n");
+                dotTree.append(""+rta+"\n");
                 return rta;
             }
             return deepthMiniMax(board, players[(playerTurn.getId()+1)%2], !max,deepth-1, alpha, beta);
